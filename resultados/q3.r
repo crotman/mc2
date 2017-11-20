@@ -5,7 +5,6 @@ setwd("~/Documents/mc2/dados")
 
 data = read.table("data_t3-t4.txt", header = TRUE)
 DIGIT = 4
-result <- list()
 
 for (i in c(0:5)) {
   instance_name = paste('I', i, sep="")
