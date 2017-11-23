@@ -1,7 +1,7 @@
 # Gerar a análise do critério de tamanho de população do algoritmo genético (pg. 1064).
 
 rm(list=ls())
-setwd("~/Documents/mc2/dados")
+setwd("/Users/andrefarzat/Documents/mc2/dados")
 
 data = read.table("data_t2.txt", header = TRUE)
 

@@ -4,7 +4,7 @@
 # based on: https://www.leeds.ac.uk/educol/documents/00002182.htm
 
 rm(list=ls())
-setwd("~/Documents/mc2/dados")
+setwd("/Users/andrefarzat/Documents/mc2/dados")
 DIGIT <- 4
 
 result <- list()
