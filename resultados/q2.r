@@ -5,15 +5,18 @@ setwd("/Users/andrefarzat/Documents/mc2/dados")
 
 data = read.table("data_t2.txt", header = TRUE)
 
-print(
-  kruskal.test(gd ~ config, data = data)
-)
+#segregando por instancias
+instancias <- unique(data$inst)
 
-print(
-  pairwise.wilcox.test(data$gd, data$config, p.adj = "bonf")
-)
-
-media = aggregate(data$gd, list(config=data$config), mean)
-print (
-  media[order(media$x),]
-)
+for (instancia in instancias)
+{
+  print("-----------------------------------------------------")
+  data_inst = subset(data, data$inst == instancia)
+  print (instancia)
+  
+  print(kruskal.test(gd ~ config, data = data_inst))
+  # kruskal indica que há diferença significativa mas não onde - logo precisamos fazer o teste ad-hoc descrito
+  
+  print(pairwise.wilcox.test(data_inst$gd, data_inst$config, p.adj = "bonf"))
+  # Daqui a gente vê que 150K apresenta diferença significativa com todos os outros
+}
