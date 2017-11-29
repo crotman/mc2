@@ -8,10 +8,15 @@ print(
   kruskal.test(gd ~ config, data = data)
 )
 
-
-media = aggregate(data$gd, list(config=data$config), mean)
-print (
-  media[order(media$x),]
+# kruskal indica que há diferença significativa mas não onde
+# logo precisamos fazer o teste ad-hoc descrito
+print(
+  pairwise.wilcox.test(data$gd, data$config, p.adj = "bonf")
 )
 
-# 1. Pq ele parou? Pq não temos dados dos 200k?
+# Daqui a gente vê que 150K apresenta diferença significativa com todos os outros, menos o 100K.
+# Rodando a media de IGD vemos que 150K tem a menor. Logo de 100 p/ 150K o aumento não é tão significante, e 150K se torna o critério de parada
+media = aggregate(data$gd, list(config=data$config), mean)
+print(
+  media[order(media$x),]
+)

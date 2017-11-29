@@ -9,6 +9,10 @@ print(
   kruskal.test(gd ~ config, data = data)
 )
 
+print(
+  pairwise.wilcox.test(data$gd, data$config, p.adj = "bonf")
+)
+
 media = aggregate(data$gd, list(config=data$config), mean)
 print (
   media[order(media$x),]
