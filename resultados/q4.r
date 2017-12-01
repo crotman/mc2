@@ -5,57 +5,69 @@ rm(list=ls())
 setwd("/Users/andrefarzat/Documents/mc2/dados")
 DIGIT <- 4
 
-result <- list()
-data <- read.table("data_t3-t4.txt", header = TRUE)
-
-for (i in c('CPM', 'MAR', 'SH', 'nsga150k2x')) {
-  subdata <- data[ which(data$config == i), ]
-  result[[i]] <- cbind(
-    best = c(round(mean(subdata$best), digits=DIGIT), round(sd(subdata$best), digits=DIGIT)),
-    hv = c(round(mean(subdata$hv), digits=DIGIT), round(sd(subdata$hv), digits=DIGIT)),
-    gd = c(round(mean(subdata$gd), digits=DIGIT), round(sd(subdata$gd), digits=DIGIT))
-  )
-  
-  print(result);
-}
-
 # http://doofussoftware.blogspot.com.br/2012/07/measuring-effect-size-with-vargha.html
 AMeasure <- function(a, b){
   
   # Compute the rank sum (Eqn 13)
-  r = rank(c(a,b))
-  r1 = sum(r[seq_along(a)])
+  r <- rank(c(a, b))
+  r1 <- sum(r[seq_along(a)])
   
   # Compute the measure (Eqn 14) 
-  m = length(a)
-  n = length(b)
-  A = (r1/m - (m+1)/2)/n
-  
+  m <- length(a)
+  n <- length(b)
+  A <- (r1 / m - (m + 1) / 2) / n
   A
 }
 
-effectsize <- function (one, two) {
-  effectsize_result <- cbind(
-    best = each_effectsize(one[1,][1], two[2,][1]),
-    hv = each_effectsize(one[1,][2], two[2,][2]),
-    gd = each_effectsize(one[1,][3], two[2,][3])
-    
-    #best = (one[1,][1] - two[1,][1]) / one[2,][1],
-    #hv = (one[1,][2] - two[1,][2]) / one[2,][2],
-    #gd = (one[1,][3] - two[1,][3]) / one[2,][3]
+data <- read.table("data_t3-t4.txt", header = TRUE)
+instances <- unique(data$inst)
+
+for (instance in instances) {
+  print("-----------------------------------------------------")
+  print(instance)
+  print("-----------------------------------------------------")
+  result <- list()
+  
+  mar_data = data[ which(data$config == 'MAR' & data$inst == instance), ]
+  mar = cbind(
+    best = mar_data$best,
+    hv = mar_data$hv,
+    gd = mar_data$gd
   )
-
-  return(effectsize_result)
+  
+  sh_data = data[ which(data$config == 'SH' & data$inst == instance), ]
+  sh = cbind(
+    best = sh_data$best,
+    hv = sh_data$hv,
+    gd = sh_data$gd
+  )
+  
+  cpm_data = data[ which(data$config == 'CPM' & data$inst == instance), ]
+  cpm = cbind(
+    best = cpm_data$best,
+    hv = cpm_data$hv,
+    gd = cpm_data$gd
+  )
+  
+  #best = paste(round(mean(nsga_data$best), digits=DIGIT), "±", round(sd(nsga_data$best), digits=DIGIT)),
+  #hv = paste(round(mean(nsga_data$hv), digits=DIGIT), "±",round(sd(nsga_data$hv), digits=DIGIT)),
+  #gd = paste(round(mean(nsga_data$gd), digits=DIGIT), "±", round(sd(nsga_data$gd), digits=DIGIT))
+  nsga_data = data[ which(data$config == 'nsga150k2x' & data$inst == instance), ]
+  nsga = cbind(best = nsga_data$best, hv = nsga_data$hv, gd = nsga_data$gd)
+  print(0)
+  a <- cpm_data$best
+  print(a)
+  print(2)
+  
+  
+  print(AMeasure(nsga_data$best, cpm_data$best))
+  #print(AMeasure(nsga, mar))
+  #print(AMeasure(nsga, sh))
 }
 
-each_effectsize <- function(r1, r2) {
-  m <- length(r1);
-  n <- length(r2);
-  return ((sum(rank(c(r1, r2)))[seq_along(r1)] / m - (m + 1) / 2) / n);
-}
 
-print(effectsize(result$nsga150k2x, result$CPM))
-print(effectsize(result$nsga150k2x, result$MAR))
-print(effectsize(result$nsga150k2x, result$SH))
 
-# effectsize(result$nsga150k2x, result$CPM)
+
+#print(AMeasure(result$nsga150k2x, result$CPM))
+#print(AMeasure(result$nsga150k2x, result$MAR))
+#print(AMeasure(result$nsga150k2x, result$SH))
