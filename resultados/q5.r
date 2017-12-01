@@ -5,15 +5,13 @@ setwd("/Users/andrefarzat/Documents/mc2/dados")
 DIGIT <- 4
 
 data <- read.table("data_t5-t6.txt", header = TRUE)
+instances = unique(data$inst)
 
-
-for (i in c(0)) {
-  instance_name <- paste('I', i, sep="")
-  
+for (instance_name in instances) {
   subdata <- data[ which(data$config == 'nsga150k2x' & data$inst == instance_name), ]
   
   nsga150k2x <- cbind(
-    best = paste(round(mean(subdata$best), digits=DIGIT), "±", round(sd(subdata$best), digits=DIGIT)),
+    best = paste(round(mean(subdata$best) * 100, digits=DIGIT), "±", round(sd(subdata$best) * 100, digits=DIGIT)),
     hv = paste(round(mean(subdata$hv), digits=DIGIT), "±",round(sd(subdata$hv), digits=DIGIT)),
     gd = paste(round(mean(subdata$gd), digits=DIGIT), "±", round(sd(subdata$gd), digits=DIGIT))
   )
@@ -23,13 +21,15 @@ for (i in c(0)) {
   subdata <- data[ which(data$config == 'nsga150k2xse' & data$inst == instance_name), ]
   
   nsga150k2xse <- cbind(
-    best = paste(round(mean(subdata$best), digits=DIGIT), "±", round(sd(subdata$best), digits=DIGIT)),
+    best = paste(round(mean(subdata$best) * 100, digits=DIGIT), "±", round(sd(subdata$best)* 100, digits=DIGIT)),
     hv = paste(round(mean(subdata$hv), digits=DIGIT), "±",round(sd(subdata$hv), digits=DIGIT)),
     gd = paste(round(mean(subdata$gd), digits=DIGIT), "±", round(sd(subdata$gd), digits=DIGIT))
   )
   
   # result <- matrix(data=c(nsga150k2x, nsga150k2xse), nrow=3, ncol=2)
-  
+  print("====================")
+  print(instance_name)
+  print("====================")
   print(nsga150k2x)
   print(nsga150k2xse)
 }
