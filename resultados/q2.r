@@ -19,4 +19,10 @@ for (instancia in instancias)
   
   print(pairwise.wilcox.test(data_inst$gd, data_inst$config, p.adj = "bonf"))
   # Daqui a gente vê que 150K apresenta diferença significativa com todos os outros
+  
+  media = aggregate(data_inst$gd, list(config=data_inst$config), mean)
+  print (
+    media[order(media$x),]
+  )
 }
+
