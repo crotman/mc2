@@ -3,31 +3,30 @@
 rm(list=ls())
 setwd("/Users/andrefarzat/Documents/mc2/dados")
 DIGIT <- 4
+options(scipen=10)
 
 data <- read.table("data_t5-t6.txt", header = TRUE)
+instances = unique(data$inst)
 
-effectsize <- function (one, two) {
-  effectsize_result <- cbind(
-    best = (one[1,][1] - two[1,][1]) / one[2,][1],
-    hv = (one[1,][2] - two[1,][2]) / one[2,][2],
-    gd = (one[1,][3] - two[1,][3]) / one[2,][3]
-  )
-  
-  return(effectsize_result)
+AMeasure <- function(r1, r2) {
+  m <- length(r1);
+  n <- length(r2);
+  return ((sum(rank(c(r1, r2))[seq_along(r1)]) / m - (m + 1) / 2) / n);
 }
 
-for (i in c(0:5)) {
-  instance_name <- paste('I', i, sep="")
-  result <- list()
-  
-  for (config in c('nsga150k2x', 'nsga150k2xse')) {
-    subdata <- data[ which(data$config == config & data$inst == instance_name), ]
-    result[[config]] <- cbind(
-      best = c(round(mean(subdata$best), digits=DIGIT), round(sd(subdata$best), digits=DIGIT)),
-      hv = c(round(mean(subdata$hv), digits=DIGIT), round(sd(subdata$hv), digits=DIGIT)),
-      gd = c(round(mean(subdata$gd), digits=DIGIT), round(sd(subdata$gd), digits=DIGIT))
-    )
-  }
+instance_names <- list(c('Best', 'HV', 'GD'), instances)
+result <- matrix(ncol = length(instances), nrow = 3, dimnames = instance_names)
+i <- 1
 
-  print(effectsize(result$nsga150k2x, result$nsga150k2xse))
+for(instance in instances) {
+  nsga150k2x_data = data[ which(data$config == 'nsga150k2x' & data$inst == instance), ]
+  nsga150k2xse_data = data[ which(data$config == 'nsga150k2xse' & data$inst == instance), ]
+  
+  result[1, i] <- AMeasure(nsga150k2x_data$best, nsga150k2xse_data$best)
+  result[2, i] <- AMeasure(nsga150k2x_data$hv, nsga150k2xse_data$hv)
+  result[3, i] <- AMeasure(nsga150k2x_data$gd, nsga150k2xse_data$gd)
+  
+  i <- i + 1
 }
+
+print(result)
