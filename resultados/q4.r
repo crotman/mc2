@@ -21,49 +21,42 @@ AMeasure <- function(a, b){
 
 data <- read.table("data_t3-t4.txt", header = TRUE)
 instances <- unique(data$inst)
+instance_names <- list(c("MAR", "SH", "CPM"), instances)
+best_result <- matrix(ncol = length(instances), nrow = 3, dimnames = instance_names)
+gd_result <- matrix(ncol = length(instances), nrow = 3, dimnames = instance_names)
+hv_result <- matrix(ncol = length(instances), nrow = 3, dimnames = instance_names)
+i <- 1
 
 for (instance in instances) {
-  print("-----------------------------------------------------")
-  print(instance)
-  print("-----------------------------------------------------")
-  result <- list()
-  
   mar_data = data[ which(data$config == 'MAR' & data$inst == instance), ]
-  mar = cbind(
-    best = mar_data$best,
-    hv = mar_data$hv,
-    gd = mar_data$gd
-  )
-  
   sh_data = data[ which(data$config == 'SH' & data$inst == instance), ]
-  sh = cbind(
-    best = sh_data$best,
-    hv = sh_data$hv,
-    gd = sh_data$gd
-  )
-  
   cpm_data = data[ which(data$config == 'CPM' & data$inst == instance), ]
-  cpm = cbind(
-    best = cpm_data$best,
-    hv = cpm_data$hv,
-    gd = cpm_data$gd
-  )
-  
-  #best = paste(round(mean(nsga_data$best), digits=DIGIT), "±", round(sd(nsga_data$best), digits=DIGIT)),
-  #hv = paste(round(mean(nsga_data$hv), digits=DIGIT), "±",round(sd(nsga_data$hv), digits=DIGIT)),
-  #gd = paste(round(mean(nsga_data$gd), digits=DIGIT), "±", round(sd(nsga_data$gd), digits=DIGIT))
   nsga_data = data[ which(data$config == 'nsga150k2x' & data$inst == instance), ]
-  nsga = cbind(best = nsga_data$best, hv = nsga_data$hv, gd = nsga_data$gd)
-  print(0)
-  a <- cpm_data$best
-  print(a)
-  print(2)
+
+  best_result[1, i] <- AMeasure(nsga_data$best, mar_data$best)
+  best_result[2, i] <- AMeasure(nsga_data$best, sh_data$best)
+  best_result[3, i] <- AMeasure(nsga_data$best, cpm_data$best)
   
+  hv_result[1, i] <- AMeasure(nsga_data$hv, mar_data$hv)
+  hv_result[2, i] <- AMeasure(nsga_data$hv, sh_data$hv)
+  hv_result[3, i] <- AMeasure(nsga_data$hv, cpm_data$hv)
   
-  print(AMeasure(nsga_data$best, cpm_data$best))
-  #print(AMeasure(nsga, mar))
-  #print(AMeasure(nsga, sh))
+  gd_result[1, i] <- AMeasure(nsga_data$gd, mar_data$gd)
+  gd_result[2, i] <- AMeasure(nsga_data$gd, sh_data$gd)
+  gd_result[3, i] <- AMeasure(nsga_data$gd, cpm_data$gd)
+
+  i <- i + 1
 }
+
+print("Best ===============")
+print(best_result)
+
+print("HV ===============")
+print(hv_result)
+
+print("GD ===============")
+print(gd_result)
+
 
 
 
