@@ -5,18 +5,11 @@ rm(list=ls())
 setwd("/Users/andrefarzat/Documents/mc2/dados")
 DIGIT <- 4
 
-# http://doofussoftware.blogspot.com.br/2012/07/measuring-effect-size-with-vargha.html
-AMeasure <- function(a, b){
-  
-  # Compute the rank sum (Eqn 13)
-  r <- rank(c(a, b))
-  r1 <- sum(r[seq_along(a)])
-  
-  # Compute the measure (Eqn 14) 
-  m <- length(a)
-  n <- length(b)
-  A <- (r1 / m - (m + 1) / 2) / n
-  A
+AMeasure <- function(r1, r2) 
+{
+  m <- length(r1);
+  n <- length(r2);
+  return ((sum(rank(c(r1, r2))[seq_along(r1)]) / m - (m + 1) / 2) / n);
 }
 
 data <- read.table("data_t3-t4.txt", header = TRUE)
@@ -32,7 +25,7 @@ for (instance in instances) {
   sh_data = data[ which(data$config == 'SH' & data$inst == instance), ]
   cpm_data = data[ which(data$config == 'CPM' & data$inst == instance), ]
   nsga_data = data[ which(data$config == 'nsga150k2x' & data$inst == instance), ]
-
+  
   best_result[1, i] <- AMeasure(nsga_data$best, mar_data$best)
   best_result[2, i] <- AMeasure(nsga_data$best, sh_data$best)
   best_result[3, i] <- AMeasure(nsga_data$best, cpm_data$best)
